@@ -65,8 +65,8 @@ const connectdataBaseHandler=async()=>{
     }
 }
 
-const server = app.listen(4040, ()=>{
-    console.log(`Server started on Port 4040`);
+const server = app.listen(process.env.PORT||8080, ()=>{
+    console.log(`Server started on Port 8080`);
 });
 
 const io = socket(server,{
