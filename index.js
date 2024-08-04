@@ -11,8 +11,10 @@ require("dotenv").config();
 const cors=require("cors");
 //Cors allows our client to make requests to other origins
 
+const app=express();
+
 const { Server } = require("socket.io");
-const server = require("http").createServer();
+const server = require("http").createServer(app);
 
 //importing routes and using it
 const userRoutes=require('./routes/auth');
@@ -23,7 +25,7 @@ const BodyParser=require("body-parser")
 
 
 
-const app=express();
+
 
 app.use(BodyParser.json())
 
@@ -43,7 +45,7 @@ app.use((req,res,next)=>{
 })
 
 app.get('/', (req, res) => {
-    res.send('Hello world');
+    res.send('make world');
   });
 
   app.use('/user',userRoutes)
@@ -66,9 +68,10 @@ const connectdataBaseHandler=async()=>{
     }
 }
 
-server.listen(process.env.PORT||7070, () => {
-  console.log("Listening on *:7070");
+server.listen(process.env.PORT||3030, () => {
+    console.log("Listening on *:7070");
 });
+
 
 const io = new Server(server, {
   cors: {
