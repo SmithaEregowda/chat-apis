@@ -11,7 +11,8 @@ require("dotenv").config();
 const cors=require("cors");
 //Cors allows our client to make requests to other origins
 
-const socket=require("socket.io");
+const { Server } = require("socket.io");
+const server = require("http").createServer();
 
 //importing routes and using it
 const userRoutes=require('./routes/auth');
@@ -65,21 +66,25 @@ const connectdataBaseHandler=async()=>{
     }
 }
 
-const server = app.listen(process.env.PORT||8080, ()=>{
-    console.log(`Server started on Port 8080`);
+server.listen(process.env.PORT||7070, () => {
+  console.log("Listening on *:7070");
 });
 
-const io = socket(server,{
-    cors: {
-        origin: "http://localhost:3000",
-        credentials: true,
-    },
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["my-custom-header"],
+    credentials: true,
+  },
 });
+
 //store all online users inside this map
 global.onlineUsers =  new Map();
  
 io.on("connection", (socket) => {
   global.chatSocket=socket;
+  console.log("A user connected");
     
     socket.on("add-user",(userId)=>{
       console.log("added user")
@@ -94,6 +99,10 @@ io.on("connection", (socket) => {
         socket.to(senderSocket).emit('recv-msg',data.msg)
       }  
     })
+
+    socket.on("disconnect", () => {
+      console.log("User disconnected");
+    });
   });
 
   console.log(onlineUsers)
